@@ -1,5 +1,5 @@
 # Db Notebook Folder
-metastore_db
+metastore_db/
 
 # Notebook's logs
 *.log

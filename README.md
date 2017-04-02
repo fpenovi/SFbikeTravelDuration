@@ -5,7 +5,6 @@
 + [Competencia Kaggle](https://inclass.kaggle.com/c/san-francisco-biking "San Francisco Biking")
 + [Set de Datos](https://www.kaggle.com/benhamner/sf-bay-area-bike-share "SF Bay Area Bike Share")
 
-
 ### Integrantes:
 ###### Alvarado, Ruben
 ###### Nuñez Leyes, Javier

@@ -1,5 +1,9 @@
 # Db Notebook Folder
 metastore_db/
+.ipynb_checkpoints/
 
 # Notebook's logs
 *.log
+
+# Dataset files
+*.csv

@@ -13,3 +13,6 @@ metastore_db/
 
 # Archivo de configuracion local
 cfg.py
+
+# Carpeta Visualizaciones
+Visualizations/

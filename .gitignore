@@ -10,3 +10,6 @@ metastore_db/
 
 # Python imports
 *.pyc
+
+# Archivo de configuracion local
+cfg.py

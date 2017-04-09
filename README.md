@@ -7,5 +7,5 @@
 
 ### Integrantes:
 ###### Alvarado, Ruben
-###### Nuñez Leyes, Javier
+###### ~~Nuñez Leyes, Javier~~
 ###### Penovi, Francisco

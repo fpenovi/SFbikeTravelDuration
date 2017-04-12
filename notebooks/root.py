@@ -26,3 +26,25 @@ def autolabel(ax, textsize, alpha):
         ax.text(rect.get_x() + rect.get_width()/2., label_position,
                 '%d' % int(height),
                 ha='center', va='bottom', size=textsize, alpha=alpha)
+
+
+''' Utilizada como parámetro para función DataFrame.apply
+    Para cada row, devuelve el zip code correspondiente a la ciudad.'''
+def cityNameToZipCode(row) :
+
+    if row.city == 'San Francisco' :
+        return '94107'
+
+    if row.city == 'Redwood City' :
+        return '94063'
+
+    if row.city == 'Palo Alto' :
+        return '94301'
+
+    if row.city == 'Mountain View' :
+        return '94041'
+
+    if row.city == 'San Jose' :
+        return '95113'
+
+    raise ValueError('Malo malo!')

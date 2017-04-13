@@ -48,3 +48,21 @@ def cityNameToZipCode(row) :
         return '95113'
 
     raise ValueError('Malo malo!')
+
+
+''' Utilizada para generar un DataFrame nuevo que contiene las filas de la ciudad
+    pasada por parámetro únicamente.'''
+def makeNewDataFrameWithCity(df, city) :
+
+    dic = {'date':[], 'city':[], 'zip_code':[], 'duration':[], 'max_temp_f':[], 'min_temp_f':[]}
+
+    for i in range(0, len(df)):
+        if (df.iloc[i]['city'] == city ) :
+            dic['date'].append(df.iloc[i]['date'])
+            dic['city'].append(df.iloc[i]['city'])
+            dic['zip_code'].append(df.iloc[i]['zip_code'])
+            dic['duration'].append(df.iloc[i]['duration'])
+            dic['max_temp_f'].append(df.iloc[i]['max_temperature_f'])
+            dic['min_temp_f'].append(df.iloc[i]['min_temperature_f'])
+
+    return pd.DataFrame.from_dict(data=dic, orient='columns')

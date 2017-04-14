@@ -66,3 +66,20 @@ def makeNewDataFrameWithCity(df, city) :
             dic['min_temp_f'].append(df.iloc[i]['min_temperature_f'])
 
     return pd.DataFrame.from_dict(data=dic, orient='columns')
+
+
+''' Utilizada para clasificar en grupos a las horas del día.'''
+def getMomentOfDay(row):
+    
+    if row.hour < 5:
+        return 'Small Hours'
+    if  5 <= row.hour < 12:
+        return 'Morning'
+    if 12 <= row.hour < 14:
+        return 'Noon'
+    if 14 <= row.hour < 18:
+        return 'Afternoon'
+    if 18 <= row.hour < 21:
+        return 'Evening'
+    if 21 <= row.hour <= 23:
+        return 'Night'

@@ -72,7 +72,7 @@ def makeNewDataFrameWithCity(df, city) :
 def getMomentOfDay(row):
     
     if row.hour < 5:
-        return 'Small Hours'
+        return 'Late night'
     if  5 <= row.hour < 12:
         return 'Morning'
     if 12 <= row.hour < 14:

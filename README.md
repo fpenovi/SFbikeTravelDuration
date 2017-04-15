@@ -5,6 +5,11 @@
 + [Competencia Kaggle](https://inclass.kaggle.com/c/san-francisco-biking "San Francisco Biking")
 + [Set de Datos](https://www.kaggle.com/benhamner/sf-bay-area-bike-share "SF Bay Area Bike Share")
 
+___
++ [Informe TP1](https://docs.google.com/document/d/1zxjopsUR9kyPczzDg4Wqp08OG7qSe_NNthI6hw_DKUE/edit?usp=sharing "Análisis Exploratorio")
++ [Kernel TP1]( "Notebook Análisis Exploratorio")
+___
+
 ### Integrantes:
 ###### Alvarado, Ruben
 ###### ~~Nuñez Leyes, Javier~~

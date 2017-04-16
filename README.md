@@ -7,7 +7,7 @@
 
 ___
 + [Informe TP1](https://docs.google.com/document/d/1zxjopsUR9kyPczzDg4Wqp08OG7qSe_NNthI6hw_DKUE/edit?usp=sharing "Análisis Exploratorio")
-+ [Kernel TP1](https://github.com/fpenovi/SFbikeTravelDuration "Notebook Análisis Exploratorio")
++ [Kernel TP1](https://github.com/fpenovi/SFbikeTravelDuration/blob/master/notebooks/00%20-%20kernel.ipynb "Notebook Análisis Exploratorio")
 ___
 
 ### Integrantes:

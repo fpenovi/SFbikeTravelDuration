@@ -70,9 +70,9 @@ def makeNewDataFrameWithCity(df, city) :
 
 ''' Utilizada para clasificar en grupos a las horas del día.'''
 def getMomentOfDay(row):
-    
+
     if row.hour < 5:
-        return 'Late night'
+        return 'Small Hours'
     if  5 <= row.hour < 12:
         return 'Morning'
     if 12 <= row.hour < 14:

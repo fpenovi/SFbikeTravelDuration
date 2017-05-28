@@ -1,8 +1,11 @@
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
+
 import csv
 from numpy import array
 from dateutil.parser import parse as parseDate
 
-#Constants subscription type
+# Constants subscription type
 SUBSCRIBER = 0
 CUSTOMER = 1
 
@@ -40,7 +43,7 @@ def parseLineDataTest(line):
 	startStation = line[3]
 	endStation = line[6]
 	subscriptionType = line[8]
-	return getDataArray(startDate, endDate, startStation, endStation, subscriptionType)	
+	return getDataArray(startDate, endDate, startStation, endStation, subscriptionType)
 
 def getDataArray(startDate, endDate, startStation, endStation, subscriptionType):
 	return array(getDateInfo(startDate) + getDateInfo(endDate) + [startStation, endStation, SUBSCRIBER if subscriptionType == 'Subscriber' else CUSTOMER])

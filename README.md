@@ -1,4 +1,6 @@
 # Organización De Datos 2017-1
+### Team Clusterboer
+<br>
 
 + [Enunciado TP1](https://docs.google.com/document/d/1w2NWZhtEV4zeuuVjokZpbWptBK1PdYiU0U03C367aAw/edit?usp=sharing "Entrega 17/04")
 + [Enunciado TP2](https://docs.google.com/document/d/1JBXaEtiopp5Ot4YLqvym8eldOcmamZRqJgulLp-DViI/edit?usp=sharing "Entrega 15/06")
@@ -9,6 +11,8 @@ ___
 + [Informe TP1](https://docs.google.com/document/d/1zxjopsUR9kyPczzDg4Wqp08OG7qSe_NNthI6hw_DKUE/edit?usp=sharing "Análisis Exploratorio")
 + [Kernel TP1](https://github.com/fpenovi/SFbikeTravelDuration/blob/master/notebooks/00%20-%20kernel.ipynb "Notebook Análisis Exploratorio")
 ___
+
++ [Team Kaggle](https://inclass.kaggle.com/t/689208/clusterboer "Team Clusterboer")
 
 ### Integrantes:
 ###### Alvarado, Ruben

@@ -3,11 +3,8 @@
 
 import numpy as np
 import pandas as pd
+from importlib import import_module
 
-#	**************************************************************************************************************************************
-#	Tutorial scikit-learn Random Forest:
-# 	http://www.agcross.com/2015/02/random-forests-in-python-with-scikit-learn/
-#	**************************************************************************************************************************************
 
 ''' Carga y preprocesa los datos en los CSV de forma equivalente para poder
     ser utilizados para un Random Forest.

@@ -22,7 +22,7 @@ def exportResults(predictions, testIds, filename) :
     print("Guardando a archivo...")
 
     with open(filename, "w") as outfile:
-        rows = [["id", "prediction"]]
+        rows = [["id", "duration"]]
 
         for idTest, prediction in zip(testIds, predictions):
             rows.append([idTest, prediction])

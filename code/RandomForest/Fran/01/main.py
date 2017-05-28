@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import sys
+from os.path import dirname, abspath
 import PreProcessor
 import RfPredictor
 
@@ -30,7 +31,14 @@ def main():
     target = None
     testVals = None
 
-    filename = "rf_" + str(estimators) + ".csv"
+    # numero de preprocessor:
+    # Carpeta padre que contiene el codigo. Para llevar tracking de
+    # con que features se realizó la submission.
+
+    # Archivo: <algoritmo>_<pre_processor>_<estimators>.csv
+    # ejemplo: rf_01_200.csv
+    pre_processorNumber = dirname(abspath(__file__)).split('/')[-1]
+    filename = "rf_" + pre_processorNumber + "_" + str(estimators) + ".csv"
     RfPredictor.exportResults(predictions, testIds, filename)
     return 0
 

@@ -3,7 +3,7 @@
 
 from sklearn.ensemble import RandomForestRegressor
 import csv
-
+import src.utils as utils
 
 def predict(train, target, testIds, testVals, estimators):
 
@@ -21,7 +21,7 @@ def exportResults(predictions, testIds, filename) :
 
     print("Guardando a archivo...")
 
-    with open(filename, "w") as outfile:
+    with open(filename, utils.getSystemWriteMode()) as outfile:
         rows = [["id", "duration"]]
 
         for idTest, prediction in zip(testIds, predictions):

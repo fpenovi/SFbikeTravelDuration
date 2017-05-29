@@ -1,15 +1,17 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
+import os
 import sys
 from importlib import import_module
 import RfPredictor
-# import PreProcessors.PreProcesor_01 as PreProcessor --> Esto funciona pero no es dinámico
-                                                         # Forma correcta de importar paquetes en Python
-
 PreProcessor = None
 
 def main():
+
+    abspath = os.path.abspath(__file__)
+    dname = os.path.dirname(abspath)
+    os.chdir(dname)
 
     if (len(sys.argv) < 3) :
         print("Modo de uso -> python main.py <n_estimators> <pre_procesing_module>")
@@ -32,7 +34,8 @@ def main():
     try:
         PreProcessor = import_module('PreProcessors.PreProcesor_' + pre_proc)
     except ImportError as e:
-        print("No existe el preprocesador: '" + pre_proc + "'.")
+        print("Error importando el preprocesador: '" + pre_proc + "'.")
+        print "Error:", e
         return 1
 # -----------------------------------------------------------------------------
 
@@ -47,12 +50,7 @@ def main():
     target = None
     testVals = None
 
-    # numero de preprocessor:
-    # Carpeta padre que contiene el codigo. Para llevar tracking de
-    # con que features se realizó la submission.
-
-    # Archivo: <algoritmo>_<pre_processor>_<estimators>.csv
-    # ejemplo: rf_01_200.csv
+    # Archivo: <algoritmo>_<pre_processor>_<estimators>.csv || ejemplo: rf_01_200.csv
     filename = "rf_" + pre_proc + "_" + str(estimators) + ".csv"
     RfPredictor.exportResults(predictions, testIds, filename)
     return 0

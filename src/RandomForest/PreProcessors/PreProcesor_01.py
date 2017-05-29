@@ -3,8 +3,7 @@
 
 import numpy as np
 import pandas as pd
-from importlib import import_module
-
+import src.utils as utils
 
 ''' Carga y preprocesa los datos en los CSV de forma equivalente para poder
     ser utilizados para un Random Forest.
@@ -16,13 +15,7 @@ from importlib import import_module
         - Tupla -> (DataFrameTrain, SeriesTarget, SeriesTestIDs, DataFrameTest)'''
 def loadData(dirTrain, dirTest) :
 
-    dfTrain = pd.read_csv(dirTrain,
-                          parse_dates=['start_date', 'end_date'],
-                          infer_datetime_format=True)
-
-    dfTest = pd.read_csv(dirTest,
-                         parse_dates=['start_date', 'end_date'],
-                         infer_datetime_format=True)
+    dfTrain, dfTest = utils.loadDataFrames(dirTrain, dirTest)
 
     # Convierto a los SUSCRIBER en un 0
     # Convierto a los CUSTOMER en un 1

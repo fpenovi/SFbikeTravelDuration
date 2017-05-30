@@ -13,7 +13,7 @@ import src.utils as utils
         - dirTest: directorio del test.csv
     Devuelve:
         - Tupla -> (DataFrameTrain, SeriesTarget, SeriesTestIDs, DataFrameTest)'''
-def loadData(dirTrain, dirTest) :
+def loadData(dirTrain, dirTest, dirStation, dirWeather) :
 
     dfTrain, dfTest = utils.loadDataFrames(dirTrain, dirTest)
 

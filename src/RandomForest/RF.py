@@ -41,7 +41,9 @@ def main():
 
     print('Cargando y Preprocesando datos...')
     train, target, testIds, testVals = PreProcessor.loadData('../../DataSet/trip_train.csv',
-                                                             '../../DataSet/trip_test.csv')
+                                                             '../../DataSet/trip_test.csv',
+                                                             '../../DataSet/station.csv',
+                                                             '../../DataSet/weather.csv')
 
     predictions = RfPredictor.predict(train, target, testIds, testVals, estimators)
 

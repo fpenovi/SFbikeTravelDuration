@@ -8,21 +8,42 @@ import platform
 
 ''' Carga los DataFrames de Train y Test parseando las fechas de las
     columnas de manera adecuada.
+    Recibe:
+        - Directorios de los DataFrames a cargar como kwargs:
+            - dirTrain
+            - dirTest
+            - dirWeather
+            - dirStation
     Devuelve:
-        - Tupla con los dos DataFrames. '''
-def loadDataFrames(dirTrain, dirTest, dirStation, dirWeather) :
+        - Tupla con los DataFrames. '''
+def loadDataFrames(**kwargs) :
 
-    dfTrain = pd.read_csv(dirTrain,
-                          parse_dates=['start_date', 'end_date'],
-                          infer_datetime_format=True)
+    if len(kwargs) < 1 :
+        raise TypeError('loadDataFrames() recibe al menos un keyword arg.')
 
-    dfTest = pd.read_csv(dirTest,
-                         parse_dates=['start_date', 'end_date'],
-                         infer_datetime_format=True)
-    dfWeather = pd.read_csv(dirWeather, parse_dates=['date'], infer_datetime_format=True) if dirStation != None else None
-    dfStation = pd.read_csv(dirStation, parse_dates=['installation_date'], infer_datetime_format=True) if dirWeather != None else None
+    possible_values = { 'dirTrain':None,
+                        'dirTest':None,
+                        'dirStation':None,
+                        'dirWeather':None }
 
-    return dfTrain, dfTest, dfStation, dfWeather
+    for key, value in possible_values.items() :
+
+        date_names = ['start_date', 'end_date'] if (key == 'dirTrain' or key == 'dirTest') else ['date']
+
+        if key == 'dirStation' :
+            date_names = ['installation_date']
+
+        if key in kwargs :
+            possible_values[key] = pd.read_csv(kwargs[key],
+                                               parse_dates=date_names,
+                                               infer_datetime_format=True)
+
+    dataFrames = ()
+    for dataFrame in [possible_values['dirTrain'], possible_values['dirTest'], possible_values['dirStation'], possible_values['dirWeather']] :
+        if dataFrame is not None :
+            dataFrames += (dataFrame, )
+
+    return dataFrames
 
 ''' Utilizada como parámetro para función DataFrame.apply
     Para cada row, devuelve el zip code correspondiente a la ciudad.'''

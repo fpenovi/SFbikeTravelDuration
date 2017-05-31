@@ -6,7 +6,7 @@ import pandas as pd
 import src.utils as utils
 
 def loadData(dirTrain, dirTest, dirStation, dirWeather) :
-	dfTrain, dfTest, dfStation, dfWeather = utils.loadDataFrames(dirTrain, dirTest, dirStation, dirWeather)
+	dfTrain, dfTest, dfStation, dfWeather = utils.loadDataFrames(dirTrain=dirTrain, dirTest=dirTest, dirStation=dirStation, dirWeather=dirWeather)
 
 	dfWeather = dfWeather[['date', 'zip_code', 'events', 'precipitation_inches']]
 	dfWeather.rename(columns={'date':'start_date'}, inplace=True)

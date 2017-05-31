@@ -15,7 +15,7 @@ import src.utils as utils
         - Tupla -> (DataFrameTrain, SeriesTarget, SeriesTestIDs, DataFrameTest)'''
 def loadData(dirTrain, dirTest, dirStation, dirWeather) :
 
-    dfTrain, dfTest = utils.loadDataFrames(dirTrain, dirTest)
+    dfTrain, dfTest = utils.loadDataFrames(dirTrain=dirTrain, dirTest=dirTest)
 
     # Convierto a los SUSCRIBER en un 0
     # Convierto a los CUSTOMER en un 1
@@ -24,6 +24,9 @@ def loadData(dirTrain, dirTest, dirStation, dirWeather) :
     # Reemplazo por 0 y 1
     dfTrain.subscription_type = dfTrain.subscription_type.astype('category', categories=subscriptionTypes).cat.codes
     dfTest.subscription_type = dfTest.subscription_type.astype('category', categories=subscriptionTypes).cat.codes
+
+    # Filtro los registros con duraciones excesivas
+    dfTrain = dfTrain[(60*2 <= dfTrain.duration) & (dfTrain.duration <= 3600*6)]
 
     # GENERO TARGET, TRAIN, TEST Y TESTIDS (testids para el output)
     target = dfTrain.duration

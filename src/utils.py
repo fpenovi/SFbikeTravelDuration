@@ -64,6 +64,18 @@ def cityNameToZipCode(row) :
     if row.city == 'San Jose' :
         return 95113
 
+''' Categoriza un evento meteorológico del set de datos 'weather.csv'
+    como 'Clear', 'Rain' o 'Rain-thunderstorm'''
+def getEventCategoryName(event):
+    if pd.isnull(event):
+        return 'Clear'
+    capitalizedEvent = event.capitalize()
+    if capitalizedEvent == 'Fog':
+        return 'Clear'
+    if capitalizedEvent == 'Fog-rain':
+        return 'Rain'
+    return capitalizedEvent
+
 def getSystemWriteMode() :
     if platform.system() == 'Windows' :
         return 'wb'

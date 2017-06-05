@@ -4,7 +4,7 @@
 import os
 import sys
 from importlib import import_module
-import RfPredictor
+import KnnPredictor
 import src.validator as Validator
 PreProcessor = None
 
@@ -15,17 +15,25 @@ def main():
     os.chdir(dname)
 
     if (len(sys.argv) < 3) :
-        print("Modo de uso -> python main.py <n_estimators> <pre_procesing_module>")
+        print("Modo de uso -> python main.py <n_neighbors> <pre_procesing_module> [distancia=2]")
         return 0
 
-    estimators = sys.argv[1]
+    neighbors = sys.argv[1]
     pre_proc = sys.argv[2]
+    distancia = sys.argv[3] if len(sys.argv) == 4 else 2    # Euclidea por defecto
+
 
 # ----------------------------VALIDO ARGUMENTOS CLI----------------------------
     try:
-        estimators = int(estimators)
+        neighbors = int(neighbors)
     except ValueError as e:
-        print("Error: parámetro n_estimators debe ser un número.")
+        print("Error: parámetro n_neighbors debe ser un número.")
+        return 1
+
+    try:
+        distancia = int(distancia)
+    except ValueError as e:
+        print("Error: párametro opcional de distancia debe ser un número entre -2 y inf .")
         return 1
 
     if (not pre_proc.isdigit() or len(pre_proc) < 2) :
@@ -46,7 +54,7 @@ def main():
                                                              '../../DataSet/station.csv',
                                                              '../../DataSet/weather.csv')
 
-    predictions = RfPredictor.predict(train, target, testIds, testVals, estimators)
+    predictions = KnnPredictor.predict(train, target, testIds, testVals, neighbors, distancia)
 
     # Permito que python libere la memoria
     train = None
@@ -56,9 +64,9 @@ def main():
     print 'Calculando score...'
     print 'Score:', Validator.getOutputScore(testIds, predictions)
 
-    # Archivo: <algoritmo>_<pre_processor>_<estimators>.csv || ejemplo: rf_01_200.csv
-    filename = "rf_" + pre_proc + "_" + str(estimators) + ".csv"
-    RfPredictor.exportResults(predictions, testIds, filename)
+    # Archivo: <algoritmo>_<pre_processor>_<neighbors>_<distancia>.csv || ejemplo: knn_01_200_02.csv
+    filename = "knn_" + pre_proc + "_" + str(neighbors) + '_' + str(distancia) + ".csv"
+    KnnPredictor.exportResults(predictions, testIds, filename)
     return 0
 
 main()

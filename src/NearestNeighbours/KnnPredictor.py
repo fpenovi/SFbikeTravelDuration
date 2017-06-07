@@ -6,7 +6,7 @@ import csv
 import sys
 import src.utils as utils
 
-DISTANCES = {-2:'braycurtis', -1:'canberra', 0:'hamming', 1:'manhattan', 2:'euclidean'}
+DISTANCES = {-3:'jaccard', -2:'braycurtis', -1:'canberra', 0:'hamming', 1:'manhattan', 2:'euclidean'}
 
 def predict(train, target, testIds, testVals, neighbors, distance=2):
 

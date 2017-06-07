@@ -3,6 +3,7 @@
 
 import os
 import sys
+import time
 from importlib import import_module
 import KnnPredictor
 import src.validator as Validator
@@ -48,6 +49,8 @@ def main():
         return 1
 # -----------------------------------------------------------------------------
 
+    start = time.time()     # Arranco a contar el tiempo
+
     print('Cargando y Preprocesando datos...')
     train, target, testIds, testVals = PreProcessor.loadData('../../DataSet/trip_train.csv',
                                                              '../../DataSet/trip_test.csv',
@@ -67,6 +70,12 @@ def main():
     # Archivo: <algoritmo>_<pre_processor>_<neighbors>_<distancia>.csv || ejemplo: knn_01_200_02.csv
     filename = "knn_" + pre_proc + "_" + str(neighbors) + '_' + str(distancia) + ".csv"
     KnnPredictor.exportResults(predictions, testIds, filename)
+
+    end = time.time()
+    m, s = divmod(end - start, 60)
+    h, m = divmod(m, 60)
+    print 'Tiempo:', "%02d:%02d:%02d" % (h, m, s)
+
     return 0
 
 main()

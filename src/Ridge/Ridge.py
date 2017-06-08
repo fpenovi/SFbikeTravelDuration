@@ -20,7 +20,6 @@ def main():
         return 0
 
     pre_proc = sys.argv[1]
-    print pre_proc
 
 # ----------------------------VALIDO ARGUMENTOS CLI----------------------------
 

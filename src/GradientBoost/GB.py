@@ -5,7 +5,7 @@ import os
 import sys
 import time
 from importlib import import_module
-import RidgePredictor
+import GbPredictor
 import src.validator as Validator
 PreProcessor = None
 
@@ -15,11 +15,19 @@ def main():
     dname = os.path.dirname(abspath)
     os.chdir(dname)
 
-    if (len(sys.argv) < 2) :
+    if (len(sys.argv) < 3) :
         print("Modo de uso -> python main.py <pre_procesing_module>")
         return 0
 
-    pre_proc = sys.argv[1]
+    estimators = sys.argv[1]
+
+    try:
+        estimators = int(estimators)
+    except ValueError as e:
+        print("Error: parámetro n_estimators debe ser un número.")
+        return 1
+
+    pre_proc = sys.argv[2]
 
 # ----------------------------VALIDO ARGUMENTOS CLI----------------------------
 
@@ -43,7 +51,7 @@ def main():
                                                              '../../DataSet/station.csv',
                                                              '../../DataSet/weather.csv')
 
-    predictions = RidgePredictor.predict(train, target, testIds, testVals)
+    predictions = GbPredictor.predict(train, target, testIds, testVals, estimators)
 
     # Permito que python libere la memoria
     train = None
@@ -53,9 +61,9 @@ def main():
     print 'Calculando score...'
     print 'Score:', Validator.getOutputScore(testIds, predictions)
 
-    # Archivo: <algoritmo>_<pre_processor>.csv || ejemplo: ridge_02.csv
-    filename = "ridge_" + pre_proc + ".csv"
-    RidgePredictor.exportResults(predictions, testIds, filename)
+    # Archivo: <algoritmo>_<n_estimators>_<pre_processor>.csv || ejemplo: gb_100_02.csv
+    filename = "gb_" + str(estimators) + "_" + pre_proc + ".csv"
+    GbPredictor.exportResults(predictions, testIds, filename)
 
     end = time.time()
     m, s = divmod(end - start, 60)

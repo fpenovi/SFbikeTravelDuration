@@ -10,6 +10,7 @@
 ___
 + [Informe TP1](https://docs.google.com/document/d/1zxjopsUR9kyPczzDg4Wqp08OG7qSe_NNthI6hw_DKUE/edit?usp=sharing "Análisis Exploratorio")
 + [Kernel TP1](https://github.com/fpenovi/SFbikeTravelDuration/blob/master/notebooks/00%20-%20kernel.ipynb "Notebook Análisis Exploratorio")
++ [Informe TP2](https://docs.google.com/document/d/1eA9WjlyYmi5HUwbEEjXiQBUP_CACaT7HUXZUj3H1zUc/edit?usp=sharing "Machine Learning")
 ___
 
 + [Team Kaggle](https://inclass.kaggle.com/t/689208/clusterboer "Team Clusterboer")

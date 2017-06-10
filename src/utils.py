@@ -76,6 +76,12 @@ def getEventCategoryName(event):
         return 'Rain'
     return capitalizedEvent
 
+def setSFMeanTemperature(row) :
+    if np.isnan(row.mean_temperature_f) :
+        temps = [50.0, 52.5, 54.5, 56.5, 56.5, 59.0, 66.0, 64.5, 62.5, 61.0, 56.5, 50.5]
+        return temps[int(row.month) - 1]
+    return row.mean_temperature_f
+
 def getSystemWriteMode() :
     if platform.system() == 'Windows' :
         return 'wb'

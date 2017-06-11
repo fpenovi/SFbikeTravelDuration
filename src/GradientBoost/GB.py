@@ -7,6 +7,7 @@ import time
 from importlib import import_module
 import GbPredictor
 import src.validator as Validator
+import src.utils as utils
 PreProcessor = None
 
 def main():
@@ -16,7 +17,7 @@ def main():
     os.chdir(dname)
 
     if (len(sys.argv) < 3) :
-        print("Modo de uso -> python main.py <pre_procesing_module>")
+        print("Modo de uso -> python main.py <n_estimators> <pre_procesing_module>")
         return 0
 
     estimators = sys.argv[1]
@@ -63,7 +64,7 @@ def main():
 
     # Archivo: <algoritmo>_<n_estimators>_<pre_processor>.csv || ejemplo: gb_100_02.csv
     filename = "gb_" + str(estimators) + "_" + pre_proc + ".csv"
-    GbPredictor.exportResults(predictions, testIds, filename)
+    utils.exportResults(predictions, testIds, filename)
 
     end = time.time()
     m, s = divmod(end - start, 60)

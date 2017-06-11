@@ -9,10 +9,10 @@ import src.utils as utils
 def predict(train, target, testIds, testVals):
 
     ridge = Ridge()
-    print("Volcando puntos...")
+    print("Ridge - Volcando puntos...")
     ridge.fit(train, target)
 
-    print("Prediciendo...")
+    print("Ridge - Prediciendo...")
     predictions = ridge.predict(testVals)
 
     return predictions

@@ -15,7 +15,7 @@ import src.utils as utils
         - Tupla -> (DataFrameTrain, SeriesTarget, SeriesTestIDs, DataFrameTest)'''
 def loadData(dirTrain, dirTest, dirStation, dirWeather) :
 
-    dfTrain, dfTest, dfStation = utils.loadDataFrames(dirTrain=dirTrain, dirTest=dirTest, dirStation=dirStation)
+    dfTrain, dfTest, dfStation, dfWeather = utils.loadDataFrames(dirTrain=dirTrain, dirTest=dirTest, dirStation=dirStation, dirWeather=dirWeather)
 
     # Convierto a los SUSCRIBER en un 0
     # Convierto a los CUSTOMER en un 1
@@ -26,32 +26,88 @@ def loadData(dirTrain, dirTest, dirStation, dirWeather) :
     dfTest.subscription_type = dfTest.subscription_type.astype('category', categories=subscriptionTypes).cat.codes
 
     # NO FILTRO los registros con duraciones excesivas ya que KNN la rompe con todos los datos
+    dfTrain = dfTrain[['id', 'duration',
+                       'start_date', 'start_station_id',
+                       'subscription_type']]
 
-    # GENERO TARGET, TRAIN, TEST Y TESTIDS (testids para el output)
-    target = dfTrain.duration
-    testIds = dfTest['id']
+    dfTest = dfTest[['id', 'start_date',
+                     'start_station_id',
+                     'subscription_type']]
 
-
-    trainDateData = {'month':dfTrain.start_date.dt.month,
-                     'day':dfTrain.start_date.dt.dayofyear,
-                     'weekday':dfTrain.start_date.dt.dayofweek,
-                     'hour':dfTrain.start_date.dt.hour}
-
-    testDateData = {'month':dfTest.start_date.dt.month,
-                    'day':dfTest.start_date.dt.dayofyear,
-                    'weekday':dfTest.start_date.dt.dayofweek,
-                    'hour':dfTest.start_date.dt.hour}
+    dfTrain['Order'] = pd.Series(xrange(len(dfTrain)))
+    dfTest['Order'] = pd.Series(xrange(len(dfTest)))
+    dfWeather = dfWeather[['date', 'zip_code', 'mean_temperature_f']]
 
     # Agrego columnas con la informacion de fechas a los dataframes
-    dfTrain = dfTrain[['start_station_id']].join(pd.DataFrame(trainDateData))
-    dfTest = dfTest[['start_station_id']].join(pd.DataFrame(testDateData))
+    dates = {'year':dfTrain.start_date.dt.year,
+             'month':dfTrain.start_date.dt.month,
+             'day':dfTrain.start_date.dt.dayofyear,
+             'weekday':dfTrain.start_date.dt.dayofweek,
+             'hour':dfTrain.start_date.dt.hour}
 
-    dfStation.rename(columns={'id':'start_station_id'}, inplace=True)
-    dfStation = dfStation[['start_station_id', 'city']]
-    cities = dfStation.city.unique()
-    dfStation.city = dfStation.city.astype('category', categories=cities).cat.codes
+    wdates = {'year':dfWeather.date.dt.year,
+              'month':dfWeather.date.dt.month,
+              'day':dfWeather.date.dt.dayofyear}
 
-    dfTrain = dfTrain.merge(dfStation, on='start_station_id')
-    dfTest = dfTest.merge(dfStation, on='start_station_id')
+    dfTrain = dfTrain.join(pd.DataFrame(dates))
+
+    dates = {'year':dfTest.start_date.dt.year,
+             'month':dfTest.start_date.dt.month,
+             'day':dfTest.start_date.dt.dayofyear,
+             'weekday':dfTest.start_date.dt.dayofweek,
+             'hour':dfTest.start_date.dt.hour}
+
+    dfTest = dfTest.join(pd.DataFrame(dates))
+
+    # Armo el DataFrame del clima con Year Month Day Zip_code como claves para poder mergear
+    dfWeather = dfWeather.join(pd.DataFrame(wdates))[['year', 'month', 'day', 'zip_code',
+                                                      'mean_temperature_f']]
+
+    # Reordeno las columnas
+    dfTrain = dfTrain[['Order', 'id', 'duration', 'year',
+                       'month', 'weekday', 'day',
+                       'hour', 'start_station_id',
+                       'subscription_type']]
+
+    dfTest = dfTest[['Order', 'id', 'year', 'month',
+                     'weekday', 'day',
+                     'hour', 'start_station_id',
+                     'subscription_type']]
+
+    # Preparo el STATION dataframe
+    dfStation.loc[:,'city'] = dfStation.apply(utils.cityNameToZipCode, axis=1)
+    dfStation.rename(columns={'id':'start_station_id', 'city':'zip_code'}, inplace=True)
+    dfStation = dfStation[['start_station_id', 'zip_code']]
+
+    # ***************REALIZO LOS MERGE CON AMBOS DATAFRAMES DE STATION Y WEATHER***************
+    dfTrain = dfTrain.merge(dfStation, on='start_station_id')[['Order', 'id', 'duration',
+                                                               'start_station_id', 'subscription_type',
+                                                               'weekday', 'year', 'month', 'day',
+                                                               'hour', 'zip_code']]
+
+    dfTest = dfTest.merge(dfStation, on='start_station_id')[['Order', 'id',
+                                                               'start_station_id', 'subscription_type',
+                                                               'weekday', 'year', 'month', 'day',
+                                                               'hour', 'zip_code']]
+
+    dfTrain = dfTrain.merge(dfWeather, on=['year', 'month', 'day', 'zip_code'])
+    dfTest = dfTest.merge(dfWeather, on=['year', 'month', 'day', 'zip_code'])
+    # ****************************************************************************************
+
+    # Elimino las rows sin muestreo de temperatura en set de TRAIN
+    dfTrain = dfTrain.loc[~dfTrain.mean_temperature_f.isnull()]
+
+    # Agrego temperaturas donde hay NaN en set de TEST
+    dfTest.mean_temperature_f = dfTest.apply(utils.setSFMeanTemperature, axis=1)
+
+    # Vuelvo al orden original
+    dfTrain.sort_values(by='Order', inplace=True)
+    dfTest.sort_values(by='Order', inplace=True)
+
+    # GENERO TARGET, TRAIN, TEST Y TESTIDS
+    target = dfTrain.duration
+    testIds = dfTest.id
+    dfTrain.drop(['Order', 'id', 'duration', 'zip_code'], axis=1, inplace=True)
+    dfTest.drop(['Order', 'id', 'zip_code'], axis=1, inplace=True)
 
     return dfTrain, target, testIds, dfTest

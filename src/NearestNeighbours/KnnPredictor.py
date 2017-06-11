@@ -17,10 +17,10 @@ def predict(train, target, testIds, testVals, neighbors, distance=2):
                               algorithm='kd_tree', leaf_size=30, p=p_distance,
                               metric=m_distance, metric_params=None, n_jobs=-1)     # Jobs = -1 elije numero de
                                                                                     # jobs segun cantidad de cores.
-    print("Volcando puntos...")
+    print("KNN - Volcando puntos...")
     knn.fit(train, target)
 
-    print("Prediciendo...")
+    print("KNN - Prediciendo...")
     predictions = knn.predict(testVals)
 
     return predictions

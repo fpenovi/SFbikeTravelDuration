@@ -4,6 +4,7 @@
 import numpy as np
 import pandas as pd
 import platform
+import csv
 
 
 ''' Carga los DataFrames de Train y Test parseando las fechas de las
@@ -117,3 +118,19 @@ def getSystemWriteMode() :
         return 'wb'
 
     return 'w'
+
+def exportResults(predictions, testIds, filename) :
+
+    print("Guardando a archivo...")
+
+    with open(filename, getSystemWriteMode()) as outfile:
+        rows = [["id", "duration"]]
+
+        for idTest, prediction in zip(testIds, predictions):
+            rows.append([idTest, prediction])
+
+        out_csv = csv.writer(outfile)
+        out_csv.writerows(rows)
+
+    print("Se guardó a " + filename + " exitosamente")
+

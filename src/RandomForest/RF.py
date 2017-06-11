@@ -3,9 +3,11 @@
 
 import os
 import sys
+import time
 from importlib import import_module
 import RfPredictor
 import src.validator as Validator
+import src.utils as utils
 PreProcessor = None
 
 def main():
@@ -39,7 +41,7 @@ def main():
         print "Error:", e
         return 1
 # -----------------------------------------------------------------------------
-
+    start = time.time()     # Arranco a contar el tiempo
     print('Cargando y Preprocesando datos...')
     train, target, testIds, testVals = PreProcessor.loadData('../../DataSet/trip_train.csv',
                                                              '../../DataSet/trip_test.csv',
@@ -58,7 +60,12 @@ def main():
 
     # Archivo: <algoritmo>_<pre_processor>_<estimators>.csv || ejemplo: rf_01_200.csv
     filename = "rf_" + pre_proc + "_" + str(estimators) + ".csv"
-    RfPredictor.exportResults(predictions, testIds, filename)
+    utils.exportResults(predictions, testIds, filename)
+
+    end = time.time()
+    m, s = divmod(end - start, 60)
+    h, m = divmod(m, 60)
+    print 'Tiempo:', "%02d:%02d:%02d" % (h, m, s)
     return 0
 
 main()

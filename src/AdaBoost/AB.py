@@ -5,7 +5,7 @@ import os
 import sys
 import time
 from importlib import import_module
-import RidgePredictor
+import AbPredictor
 import src.validator as Validator
 import src.utils as utils
 PreProcessor = None
@@ -16,13 +16,20 @@ def main():
     dname = os.path.dirname(abspath)
     os.chdir(dname)
 
-    if (len(sys.argv) < 2) :
-        print("Modo de uso -> python main.py <pre_procesing_module>")
+    if (len(sys.argv) < 3) :
+        print("Modo de uso -> python main.py <n_estimators> <pre_procesing_module>")
         return 0
 
-    pre_proc = sys.argv[1]
+    estimators = sys.argv[1]
+    pre_proc = sys.argv[2]
+
 
 # ----------------------------VALIDO ARGUMENTOS CLI----------------------------
+    try:
+        estimators = int(estimators)
+    except ValueError as e:
+        print("Error: parámetro n_estimators debe ser un número.")
+        return 1
 
     if (not pre_proc.isdigit() or len(pre_proc) < 2) :
         print("Error: parámetro pre_procesing_module debe ser numérico y de dos caracteres (i.e: '01').")
@@ -44,7 +51,7 @@ def main():
                                                              '../../DataSet/station.csv',
                                                              '../../DataSet/weather.csv')
 
-    predictions = RidgePredictor.predict(train, target, testIds, testVals)
+    predictions = AbPredictor.predict(train, target, testIds, testVals, estimators)
 
     # Permito que python libere la memoria
     train = None
@@ -54,8 +61,8 @@ def main():
     print 'Calculando score...'
     print 'Score:', Validator.getOutputScore(testIds, predictions)
 
-    # Archivo: <algoritmo>_<pre_processor>.csv || ejemplo: ridge_02.csv
-    filename = "ridge_" + pre_proc + ".csv"
+    # Archivo: <algoritmo>_<pre_processor>_<estimators>.csv || ejemplo: ab_200.csv
+    filename = "ab_" + pre_proc + "_" + str(estimators) + ".csv"
     utils.exportResults(predictions, testIds, filename)
 
     end = time.time()

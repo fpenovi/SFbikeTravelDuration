@@ -16,18 +16,3 @@ def predict(train, target, testIds, testVals):
     predictions = ridge.predict(testVals)
 
     return predictions
-
-def exportResults(predictions, testIds, filename) :
-
-    print("Guardando a archivo...")
-
-    with open(filename, utils.getSystemWriteMode()) as outfile:
-        rows = [["id", "duration"]]
-
-        for idTest, prediction in zip(testIds, predictions):
-            rows.append([idTest, prediction])
-
-        out_csv = csv.writer(outfile)
-        out_csv.writerows(rows)
-
-    print("Se guardó a " + filename + " exitosamente")

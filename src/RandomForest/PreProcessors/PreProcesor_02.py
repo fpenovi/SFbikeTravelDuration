@@ -5,58 +5,121 @@ import numpy as np
 import pandas as pd
 import src.utils as utils
 
+''' Carga y preprocesa los datos en los CSV de forma equivalente para poder
+    ser utilizados para un Random Forest.
+
+    Recibe:
+        - dirTrain: directorio del train.csv
+        - dirTest: directorio del test.csv
+    Devuelve:
+        - Tupla -> (DataFrameTrain, SeriesTarget, SeriesTestIDs, DataFrameTest)'''
 def loadData(dirTrain, dirTest, dirStation, dirWeather) :
-	dfTrain, dfTest, dfStation, dfWeather = utils.loadDataFrames(dirTrain=dirTrain, dirTest=dirTest, dirStation=dirStation, dirWeather=dirWeather)
 
-	dfWeather = dfWeather[['date', 'zip_code', 'events', 'precipitation_inches']]
-	dfWeather.rename(columns={'date':'start_date'}, inplace=True)
-	dfWeather.events = dfWeather.events.apply(utils.getEventCategoryName)
+    dfTrain, dfTest, dfStation, dfWeather = utils.loadDataFrames(dirTrain=dirTrain, dirTest=dirTest, dirStation=dirStation, dirWeather=dirWeather)
 
-    #Convierto a 0,1,2,3,4 de acuerdo al tipo de evento
-	events = dfWeather.events.unique()
-	dfWeather.events = dfWeather.events.astype('category', categories=events).cat.codes
-	dfStation.rename(columns={'id':'start_station_id'}, inplace=True)
+    # Convierto a los SUSCRIBER en un 0
+    # Convierto a los CUSTOMER en un 1
+    subscriptionTypes = dfTrain.subscription_type.unique()
 
-	#Recorto del train los viajes cuya duración es ESTUPIDA
-	dfTrain = dfTrain[(60*2 <= dfTrain.duration) & (dfTrain.duration <= 3600*6)]
-	#Agrego columna de events a dfTrain
-	dfTrain = dfTrain.merge(dfStation[['start_station_id', 'city']], on=['start_station_id'])
-	dfTrain.zip_code = dfTrain.apply(utils.cityNameToZipCode, axis=1)
-	dfTrain.start_date = pd.to_datetime(dfTrain.start_date.dt.date)
-	dfTrain = dfTrain.merge(dfWeather, on=['start_date', 'zip_code'])
+    # Reemplazo por 0 y 1
+    dfTrain.subscription_type = dfTrain.subscription_type.astype('category', categories=subscriptionTypes).cat.codes
+    dfTest.subscription_type = dfTest.subscription_type.astype('category', categories=subscriptionTypes).cat.codes
 
-	#Agrego columna de events a dfTest
-	dfTest = dfTest.merge(dfStation[['start_station_id', 'city']], on=['start_station_id'])
-	dfTest.zip_code = dfTest.apply(utils.cityNameToZipCode, axis=1)
-	dfTest.start_date = pd.to_datetime(dfTest.start_date.dt.date)
-	dfTest = dfTest.merge(dfWeather, on=['start_date', 'zip_code'])
+    # NO FILTRO los registros con duraciones excesivas ya que KNN la rompe con todos los datos
+    dfTrain = dfTrain[['id', 'duration',
+                       'start_date', 'start_station_id',
+                       'subscription_type']]
 
-	# Convierto a los SUSCRIBER en un 0
-	# Convierto a los CUSTOMER en un 1
-	subscriptionTypes = dfTrain.subscription_type.unique()
+    dfTest = dfTest[['id', 'start_date',
+                     'start_station_id',
+                     'subscription_type']]
 
-	# Reemplazo por 0 y 1
-	dfTrain.subscription_type = dfTrain.subscription_type.astype('category', categories=subscriptionTypes).cat.codes
-	dfTest.subscription_type = dfTest.subscription_type.astype('category', categories=subscriptionTypes).cat.codes
+    dfTrain['Order'] = pd.Series(xrange(len(dfTrain)))
+    dfTest['Order'] = pd.Series(xrange(len(dfTest)))
+    dfWeather = dfWeather[['date', 'zip_code', 'mean_temperature_f', 'events']]
 
-	# GENERO TARGET, TRAIN, TEST Y TESTIDS (testids para el output)
-	target = dfTrain.duration
-	testIds = dfTest['id']
+    # Agrego columnas con la informacion de fechas a los dataframes
+    dates = {'year':dfTrain.start_date.dt.year,
+             'month':dfTrain.start_date.dt.month,
+             'day':dfTrain.start_date.dt.dayofyear,
+             'weekday':dfTrain.start_date.dt.dayofweek,
+             'hour':dfTrain.start_date.dt.hour}
 
-	trainDateData = {'start_month':dfTrain.start_date.dt.month,
-                     'start_dayOfWeek':dfTrain.start_date.dt.dayofweek,
-                     'start_hourOfDay':dfTrain.start_date.dt.hour,
-                     'start_year':dfTrain.start_date.dt.year,
-                     'start_dayOfYear':dfTrain.start_date.dt.dayofyear}
+    wdates = {'year':dfWeather.date.dt.year,
+              'month':dfWeather.date.dt.month,
+              'day':dfWeather.date.dt.dayofyear}
 
-	testDateData = {'start_month':dfTest.start_date.dt.month,
-                    'start_dayOfWeek':dfTest.start_date.dt.dayofweek,
-                    'start_hourOfDay':dfTest.start_date.dt.hour,
-                    'start_year':dfTest.start_date.dt.year,
-                    'start_dayOfYear':dfTest.start_date.dt.dayofyear}
+    dfTrain = dfTrain.join(pd.DataFrame(dates))
 
-	# Agrego columnas con la informacion de fechas a los dataframes
-	dfTrain = dfTrain[['start_station_id', 'subscription_type', 'events']].join(pd.DataFrame(trainDateData), how='outer')
-	dfTest = dfTest[['start_station_id', 'subscription_type', 'events']].join(pd.DataFrame(testDateData), how='outer')
+    dates = {'year':dfTest.start_date.dt.year,
+             'month':dfTest.start_date.dt.month,
+             'day':dfTest.start_date.dt.dayofyear,
+             'weekday':dfTest.start_date.dt.dayofweek,
+             'hour':dfTest.start_date.dt.hour}
 
-	return dfTrain, target, testIds, dfTest
+    dfTest = dfTest.join(pd.DataFrame(dates))
+
+    # Armo el DataFrame del clima con Year Month Day Zip_code como claves para poder mergear
+    dfWeather = dfWeather.join(pd.DataFrame(wdates))[['year', 'month', 'day', 'zip_code',
+                                                      'mean_temperature_f', 'events']]
+
+    # Reordeno las columnas
+    dfTrain = dfTrain[['Order', 'id', 'duration', 'year',
+                       'month', 'weekday', 'day',
+                       'hour', 'start_station_id',
+                       'subscription_type']]
+
+    dfTest = dfTest[['Order', 'id', 'year', 'month',
+                     'weekday', 'day',
+                     'hour', 'start_station_id',
+                     'subscription_type']]
+
+    # Preparo el STATION dataframe
+    dfStation.loc[:,'city'] = dfStation.apply(utils.cityNameToZipCode, axis=1)
+    dfStation.rename(columns={'id':'start_station_id', 'city':'zip_code'}, inplace=True)
+    dfStation = dfStation[['start_station_id', 'zip_code']]
+
+    # ***************REALIZO LOS MERGE CON AMBOS DATAFRAMES DE STATION Y WEATHER***************
+    dfTrain = dfTrain.merge(dfStation, on='start_station_id')[['Order', 'id', 'duration',
+                                                               'start_station_id', 'subscription_type',
+                                                               'weekday', 'year', 'month', 'day',
+                                                               'hour', 'zip_code']]
+
+    dfTest = dfTest.merge(dfStation, on='start_station_id')[['Order', 'id',
+                                                               'start_station_id', 'subscription_type',
+                                                               'weekday', 'year', 'month', 'day',
+                                                               'hour', 'zip_code']]
+
+    dfTrain = dfTrain.merge(dfWeather, on=['year', 'month', 'day', 'zip_code'])
+    dfTest = dfTest.merge(dfWeather, on=['year', 'month', 'day', 'zip_code'])
+    # ****************************************************************************************
+
+    # Elimino las rows sin muestreo de temperatura en set de TRAIN
+    dfTrain = dfTrain.loc[~dfTrain.mean_temperature_f.isnull()]
+
+    # Completo los NaN en el set de TRAIN
+    # dfTrain.mean_temperature_f = dfTrain.apply(utils.setMeanTemperature, axis=1)
+    # dfTrain.mean_wind_speed_mph = dfTrain.apply(utils.setMeanWindSpeed, axis=1)
+    dfTrain.events = dfTrain.apply(utils.fillEvents, axis=1)
+
+    # Completo los NaN en el set de TEST
+    dfTest.mean_temperature_f = dfTest.apply(utils.setMeanTemperature, axis=1)
+    dfTest.events = dfTest.apply(utils.fillEvents, axis=1)
+    # dfTest.mean_wind_speed_mph = dfTest.apply(utils.setMeanWindSpeed, axis=1)
+
+    # Cambio los events por enteros
+    eventTypes = dfTrain.events.unique()
+    dfTrain.events = dfTrain.events.astype('category', categories=eventTypes).cat.codes
+    dfTest.events = dfTest.events.astype('category', categories=eventTypes).cat.codes
+
+    # Vuelvo al orden original
+    dfTrain.sort_values(by='Order', inplace=True)
+    dfTest.sort_values(by='Order', inplace=True)
+
+    # GENERO TARGET, TRAIN, TEST Y TESTIDS
+    target = dfTrain.duration
+    testIds = dfTest.id
+    dfTrain.drop(['Order', 'id', 'duration', 'zip_code'], axis=1, inplace=True)
+    dfTest.drop(['Order', 'id', 'zip_code'], axis=1, inplace=True)
+
+    return dfTrain, target, testIds, dfTest

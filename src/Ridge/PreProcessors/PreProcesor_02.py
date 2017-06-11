@@ -36,7 +36,7 @@ def loadData(dirTrain, dirTest, dirStation, dirWeather) :
 
     dfTrain['Order'] = pd.Series(xrange(len(dfTrain)))
     dfTest['Order'] = pd.Series(xrange(len(dfTest)))
-    dfWeather = dfWeather[['date', 'zip_code', 'mean_temperature_f']]
+    dfWeather = dfWeather[['date', 'zip_code', 'mean_temperature_f', 'events']]
 
     # Agrego columnas con la informacion de fechas a los dataframes
     dates = {'year':dfTrain.start_date.dt.year,
@@ -61,7 +61,7 @@ def loadData(dirTrain, dirTest, dirStation, dirWeather) :
 
     # Armo el DataFrame del clima con Year Month Day Zip_code como claves para poder mergear
     dfWeather = dfWeather.join(pd.DataFrame(wdates))[['year', 'month', 'day', 'zip_code',
-                                                      'mean_temperature_f']]
+                                                      'mean_temperature_f', 'events']]
 
     # Reordeno las columnas
     dfTrain = dfTrain[['Order', 'id', 'duration', 'year',
@@ -97,8 +97,20 @@ def loadData(dirTrain, dirTest, dirStation, dirWeather) :
     # Elimino las rows sin muestreo de temperatura en set de TRAIN
     dfTrain = dfTrain.loc[~dfTrain.mean_temperature_f.isnull()]
 
-    # Agrego temperaturas donde hay NaN en set de TEST
-    dfTest.mean_temperature_f = dfTest.apply(utils.setSFMeanTemperature, axis=1)
+    # Completo los NaN en el set de TRAIN
+    # dfTrain.mean_temperature_f = dfTrain.apply(utils.setMeanTemperature, axis=1)
+    # dfTrain.mean_wind_speed_mph = dfTrain.apply(utils.setMeanWindSpeed, axis=1)
+    dfTrain.events = dfTrain.apply(utils.fillEvents, axis=1)
+
+    # Completo los NaN en el set de TEST
+    dfTest.mean_temperature_f = dfTest.apply(utils.setMeanTemperature, axis=1)
+    dfTest.events = dfTest.apply(utils.fillEvents, axis=1)
+    # dfTest.mean_wind_speed_mph = dfTest.apply(utils.setMeanWindSpeed, axis=1)
+
+    # Cambio los events por enteros
+    eventTypes = dfTrain.events.unique()
+    dfTrain.events = dfTrain.events.astype('category', categories=eventTypes).cat.codes
+    dfTest.events = dfTest.events.astype('category', categories=eventTypes).cat.codes
 
     # Vuelvo al orden original
     dfTrain.sort_values(by='Order', inplace=True)

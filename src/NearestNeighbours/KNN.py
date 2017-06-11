@@ -7,6 +7,7 @@ import time
 from importlib import import_module
 import KnnPredictor
 import src.validator as Validator
+import src.utils as utils
 PreProcessor = None
 
 def main():
@@ -69,7 +70,7 @@ def main():
 
     # Archivo: <algoritmo>_<pre_processor>_<neighbors>_<distancia>.csv || ejemplo: knn_01_200_02.csv
     filename = "knn_" + pre_proc + "_" + str(neighbors) + '_' + str(distancia) + ".csv"
-    KnnPredictor.exportResults(predictions, testIds, filename)
+    utils.exportResults(predictions, testIds, filename)
 
     end = time.time()
     m, s = divmod(end - start, 60)

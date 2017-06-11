@@ -76,11 +76,41 @@ def getEventCategoryName(event):
         return 'Rain'
     return capitalizedEvent
 
-def setSFMeanTemperature(row) :
+def setMeanTemperature(row) :
     if np.isnan(row.mean_temperature_f) :
-        temps = [50.0, 52.5, 54.5, 56.5, 56.5, 59.0, 66.0, 64.5, 62.5, 61.0, 56.5, 50.5]
-        return temps[int(row.month) - 1]
+
+        temps = { 94107:[50.0, 52.5, 54.5, 56.5, 56.5, 59.0, 66.0, 64.5, 62.5, 61.0, 56.5, 50.5], # San Francisco
+                  94063:[49.0, 52.5, 55.0, 57.5, 62.0, 66.0, 68.0, 68.5, 67.0, 62.0, 54.5, 49.0], # Redwood City
+                  94301:[48.0, 51.5, 54.5, 57.5, 61.5, 65.0, 68.0, 67.0, 66.5, 61.0, 53.5, 48.0], # Palo Alto
+                  94041:[51.0, 53.5, 56.0, 59.0, 62.5, 66.5, 68.0, 68.0, 68.0, 63.5, 56.0, 51.0], # Mountain View
+                  95113:[51.0, 54.5, 57.0, 59.5, 64.0, 68.5, 71.0, 71.0, 69.5, 64.5, 56.5, 51.5]} # San Jose
+
+        return temps[row.zip_code][int(row.month) - 1]
+
     return row.mean_temperature_f
+
+def setMeanWindSpeed(row) :
+    if np.isnan(row.mean_wind_speed_mph) :
+
+        speed = { 94107:[7.0, 8.0, 10.0, 12.0, 14.0, 14.0, 13.0, 12.0, 11.0, 9.0, 7.0, 7.0], # San Francisco
+                  94063:[7.0, 8.0, 9.0, 10.0, 11.0, 11.0, 11.0, 10.0, 9.0, 8.0, 7.0, 7.0],   # Redwood City
+                  94301:[6.0, 7.0, 9.0, 10.0, 10.0, 11.0, 10.0, 10.0, 9.0, 7.0, 6.0, 6.0],   # Palo Alto
+                  94041:[6.0, 7.0, 9.0, 10.0, 10.0, 11.0, 10.0, 10.0, 9.0, 7.0, 6.0, 6.0],   # Mountain View
+                  95113:[5.0, 6.0, 6.0, 7.0, 8.0, 8.0, 7.0, 7.0, 6.0, 5.0, 5.0, 5.0]}        # San Jose
+
+        return speed[row.zip_code][int(row.month) - 1]
+
+    return row.mean_wind_speed_mph
+
+def fillEvents(row) :
+    if pd.isnull(row.events) :
+        return 'Clear'
+
+    if 'rain' in row.events.lower() :
+        return 'Rain'
+
+    if 'fog' in row.events.lower() :
+        return 'Fog'
 
 def getSystemWriteMode() :
     if platform.system() == 'Windows' :

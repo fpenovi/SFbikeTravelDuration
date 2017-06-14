@@ -7,6 +7,8 @@ import platform
 import csv
 import math
 
+DISTANCES = {-3:'jaccard', -2:'braycurtis', -1:'canberra', 0:'hamming', 1:'manhattan', 2:'euclidean'}
+
 
 ''' Carga los DataFrames de Train y Test parseando las fechas de las
     columnas de manera adecuada.
@@ -149,4 +151,3 @@ def primeNumbersBetween(min_number, max_number):
         if all(num%i != 0 for i in range(2, int(math.sqrt(num)) + 1)):
            primes.append(num)
     return primes
-

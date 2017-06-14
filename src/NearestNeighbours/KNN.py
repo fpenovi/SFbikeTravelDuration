@@ -65,7 +65,7 @@ def main():
     # testVals = scaler.transform(testVals)
 
     print 'Estandarizando data sets...'
-    scaler = MinMaxScaler().fit(train)
+    scaler = StandardScaler().fit(train)
     train = scaler.transform(train)
     testVals = scaler.transform(testVals)
 

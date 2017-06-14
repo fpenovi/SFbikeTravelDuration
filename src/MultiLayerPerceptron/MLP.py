@@ -5,8 +5,7 @@ import os
 import sys
 import time
 from importlib import import_module
-from sklearn.preprocessing import StandardScaler
-import RfPredictor
+import MultiLayerPerceptronPredictor
 import src.validator as Validator
 import src.utils as utils
 PreProcessor = None
@@ -17,19 +16,13 @@ def main():
     dname = os.path.dirname(abspath)
     os.chdir(dname)
 
-    if (len(sys.argv) < 3) :
-        print("Modo de uso -> python main.py <n_estimators> <pre_procesing_module>")
+    if (len(sys.argv) < 2) :
+        print("Modo de uso -> python main.py <pre_processor>")
         return 0
 
-    estimators = sys.argv[1]
-    pre_proc = sys.argv[2]
+    pre_proc = sys.argv[1]
 
 # ----------------------------VALIDO ARGUMENTOS CLI----------------------------
-    try:
-        estimators = int(estimators)
-    except ValueError as e:
-        print("Error: parámetro n_estimators debe ser un número.")
-        return 1
 
     if (not pre_proc.isdigit() or len(pre_proc) < 2) :
         print("Error: parámetro pre_procesing_module debe ser numérico y de dos caracteres (i.e: '01').")
@@ -42,19 +35,16 @@ def main():
         print "Error:", e
         return 1
 # -----------------------------------------------------------------------------
+
     start = time.time()     # Arranco a contar el tiempo
+
     print('Cargando y Preprocesando datos...')
     train, target, testIds, testVals = PreProcessor.loadData('../../DataSet/trip_train.csv',
                                                              '../../DataSet/trip_test.csv',
                                                              '../../DataSet/station.csv',
                                                              '../../DataSet/weather.csv')
 
-    print 'Estandarizando data sets...'
-    scaler = StandardScaler().fit(train)
-    train = scaler.transform(train)
-    testVals = scaler.transform(testVals)
-
-    predictions = RfPredictor.predict(train, target, testIds, testVals, estimators)
+    predictions = MultiLayerPerceptronPredictor.predict(train, target, testIds, testVals)
 
     # Permito que python libere la memoria
     train = None
@@ -64,14 +54,15 @@ def main():
     print 'Calculando score...'
     print 'Score:', Validator.getOutputScore(testIds, predictions)
 
-    # Archivo: <algoritmo>_<pre_processor>_<estimators>.csv || ejemplo: rf_01_200.csv
-    filename = "rf_" + pre_proc + "_" + str(estimators) + ".csv"
+    # Archivo: <algoritmo>_<pre_processor>_<alpha>.csv || ejemplo: mlp_02_0001.csv
+    filename = "mlp_" + pre_proc + "_" + ".csv"
     utils.exportResults(predictions, testIds, filename)
 
     end = time.time()
     m, s = divmod(end - start, 60)
     h, m = divmod(m, 60)
     print 'Tiempo:', "%02d:%02d:%02d" % (h, m, s)
+
     return 0
 
 main()

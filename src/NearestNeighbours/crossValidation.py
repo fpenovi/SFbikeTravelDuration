@@ -8,8 +8,8 @@ from importlib import import_module
 from sklearn.neighbors import KNeighborsRegressor
 from sklearn.model_selection import cross_val_score
 import src.utils as utils
+from src.utils import DISTANCES
 
-DISTANCES = {-3:'jaccard', -2:'braycurtis', -1:'canberra', 0:'hamming', 1:'manhattan', 2:'euclidean'}
 
 def main():
 	abspath = os.path.abspath(__file__)
@@ -36,22 +36,25 @@ def main():
 		print ("Error importando el preprocesador: '" + pre_proc + "'.")
 		print ("Error:", e)
 		return 1
-	if (not k_from.isdigit()) : 
+	if (not k_from.isdigit()) :
 		print ("Error: Parámetro k_from debe ser numérico")
 		return 1
-	
+
 	if (not k_to.isdigit()):
 		print("Error: Parámetro k_to debe ser numérico")
 		return 1
 
-	if (not distancia.isdigit()):
-		print("Error: Parámetro distancia debe ser numérico")
+	try:
+		distancia = int(distancia)
+	except ValueError as e:
+		print "Error: Parámetro distancia debe ser numérico"
 		return 1
 
 	metric = DISTANCES[int(distancia)] if (distancia in DISTANCES) else 'minkowski'
 	p = int(distancia) if(metric not in DISTANCES) else None
 	k_from = int(k_from)
 	k_to = int(k_to)
+	s_algorithm = 'ball_tree' if (distance < 1) else 'kd_tree'
 
 	if (not k_from < k_to):
 		print("Error: Parámetro k_from debe ser menor a k_to")
@@ -68,9 +71,9 @@ def main():
 	print ("Realizando cross validation de KNN para los K primos entre %d y %d con métrica %s" % (k_from, k_to, metric))
 	for k in kValues:
 		knn = KNeighborsRegressor(	n_neighbors = k, n_jobs = -1,
-								 	weights='distance', algorithm = 'kd_tree',
+								 	weights='distance', algorithm = s_algorithm,
 								 	leaf_size=30, p = p, metric = metric)
-		errors = cross_val_score(	knn, train, target, 
+		errors = cross_val_score(	knn, train, target,
 									scoring = 'neg_mean_squared_error')
 		# Tomo el promedio de los diferentes errores e invierto su valor por ser negativo
 		cvErrors.append(-errors.mean())

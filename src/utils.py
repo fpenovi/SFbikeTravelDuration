@@ -5,6 +5,7 @@ import numpy as np
 import pandas as pd
 import platform
 import csv
+import math
 
 
 ''' Carga los DataFrames de Train y Test parseando las fechas de las
@@ -133,4 +134,19 @@ def exportResults(predictions, testIds, filename) :
         out_csv.writerows(rows)
 
     print("Se guardó a " + filename + " exitosamente")
+
+'''Devuelve los numeros primos entre min_number y max_number'''
+def primeNumbersBetween(min_number, max_number):
+    primes = []
+    #Si es menor o igual a dos lo agrego para descartar pares
+    if (min_number <= 2):
+        primes.append(2)
+    #Si es par lo descarto y avanzo al próximo impar
+    if (min_number%2 == 0):
+        min_number = min_number + 1
+
+    for num in range(min_number, max_number + 1, 2):
+        if all(num%i != 0 for i in range(2, int(math.sqrt(num)) + 1)):
+           primes.append(num)
+    return primes
 

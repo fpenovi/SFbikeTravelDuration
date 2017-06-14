@@ -59,8 +59,13 @@ def main():
                                                              '../../DataSet/station.csv',
                                                              '../../DataSet/weather.csv')
 
+    # print 'Estandarizando data sets...'
+    # scaler = StandardScaler().fit(train)
+    # train = scaler.transform(train)
+    # testVals = scaler.transform(testVals)
+
     print 'Estandarizando data sets...'
-    scaler = StandardScaler().fit(train)
+    scaler = MinMaxScaler().fit(train)
     train = scaler.transform(train)
     testVals = scaler.transform(testVals)
 

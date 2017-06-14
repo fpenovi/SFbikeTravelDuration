@@ -17,5 +17,3 @@ def predict(train, target, testIds, testVals, estimators):
     predictions = rf.predict(testVals)
 
     return predictions
-
-

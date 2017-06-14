@@ -8,7 +8,10 @@ import src.utils as utils
 
 def predict(train, target, testIds, testVals):
 
-    ridge = Ridge()
+    ridge = Ridge(alpha=10.0, fit_intercept=True, normalize=False,
+             copy_X=True, max_iter=None, tol=0.001,
+             solver='svd', random_state=0)
+
     print("Ridge - Volcando puntos...")
     ridge.fit(train, target)
 

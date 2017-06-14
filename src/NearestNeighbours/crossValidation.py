@@ -54,7 +54,7 @@ def main():
 	p = int(distancia) if(metric not in DISTANCES) else None
 	k_from = int(k_from)
 	k_to = int(k_to)
-	s_algorithm = 'ball_tree' if (distance < 1) else 'kd_tree'
+	s_algorithm = 'ball_tree' if (int(distancia) < 1) else 'kd_tree'
 
 	if (not k_from < k_to):
 		print("Error: Parámetro k_from debe ser menor a k_to")

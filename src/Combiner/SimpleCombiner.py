@@ -37,9 +37,10 @@ def combinate():
 	scaler = StandardScaler().fit(train)
 	train = scaler.transform(train)
 	testVals = scaler.transform(testVals)
-	predictors = ["KNN", "RANDOM FOREST"]
-	predictions = [	KnnPredictor.predict(train, target, testIds, testVals, 707, 1),
-					RfPredictor.predict(train, target, testIds, testVals, 307)]
+	predictors = ["KNN", "RANDOM FOREST", "ADA BOOST"]
+	predictions = [	KnnPredictor.predict(train, target, testIds, testVals, 821, 1),
+					RfPredictor.predict(train, target, testIds, testVals, 401),
+					AbPredictor.predict(train, target, testIds, testVals, 5)]
 
 	#Tomo los errors de cada uno de los predictores
 	errors = []

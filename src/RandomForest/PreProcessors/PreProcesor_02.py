@@ -25,6 +25,7 @@ def loadData(dirTrain, dirTest, dirStation, dirWeather) :
     dfTrain.subscription_type = dfTrain.subscription_type.astype('category', categories=subscriptionTypes).cat.codes
     dfTest.subscription_type = dfTest.subscription_type.astype('category', categories=subscriptionTypes).cat.codes
 
+    # NO FILTRO los registros con duraciones excesivas ya que KNN la rompe con todos los datos
     dfTrain = dfTrain[['id', 'duration',
                        'start_date', 'start_station_id',
                        'subscription_type']]

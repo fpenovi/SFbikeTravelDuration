@@ -6,10 +6,12 @@ import csv
 import sys
 import src.utils as utils
 
-def predict(train, target, testIds, testVals, estimators):
+def predict(train, target, testIds, testVals, estimators) :
 
-    rf = RandomForestRegressor(n_estimators=estimators, n_jobs=-1, random_state=0) 	# Jobs = -1 elije numero de
-                                                                    # jobs segun cantidad de cores.
+    rf = RandomForestRegressor(n_estimators=estimators, n_jobs=-1, random_state=0)
+    # Jobs = -1 elije numero de
+    # jobs segun cantidad de cores.
+    
     print("RF - Volcando puntos...")
     rf.fit(train, target)
 
@@ -17,5 +19,3 @@ def predict(train, target, testIds, testVals, estimators):
     predictions = rf.predict(testVals)
 
     return predictions
-
-

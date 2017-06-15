@@ -6,6 +6,7 @@ import sys
 import time
 from importlib import import_module
 import AbPredictor
+from sklearn.preprocessing import StandardScaler
 import src.validator as Validator
 import src.utils as utils
 PreProcessor = None
@@ -50,6 +51,10 @@ def main():
                                                              '../../DataSet/trip_test.csv',
                                                              '../../DataSet/station.csv',
                                                              '../../DataSet/weather.csv')
+    print 'Estandarizando data sets...'
+    scaler = StandardScaler().fit(train)
+    train = scaler.transform(train)
+    testVals = scaler.transform(testVals)
 
     predictions = AbPredictor.predict(train, target, testIds, testVals, estimators)
 

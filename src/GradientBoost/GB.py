@@ -5,6 +5,7 @@ import os
 import sys
 import time
 from importlib import import_module
+from sklearn.preprocessing import StandardScaler
 import GbPredictor
 import src.validator as Validator
 import src.utils as utils
@@ -51,6 +52,10 @@ def main():
                                                              '../../DataSet/trip_test.csv',
                                                              '../../DataSet/station.csv',
                                                              '../../DataSet/weather.csv')
+    print 'Estandarizando data sets...'
+    scaler = StandardScaler().fit(train)
+    train = scaler.transform(train)
+    testVals = scaler.transform(testVals)
 
     predictions = GbPredictor.predict(train, target, testIds, testVals, estimators)
 

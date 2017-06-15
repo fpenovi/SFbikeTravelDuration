@@ -7,6 +7,7 @@ import sys
 from sklearn.preprocessing import StandardScaler
 from sklearn.neighbors import KNeighborsRegressor
 from sklearn.ensemble import RandomForestRegressor
+from sklearn.ensemble import AdaBoostRegressor
 from sklearn.linear_model import Ridge
 from importlib import import_module
 import src.validator as validator
@@ -36,11 +37,11 @@ def combinate():
 	scaler = StandardScaler().fit(train)
 	train = scaler.transform(train)
 	testVals = scaler.transform(testVals)
-	predictors = ["KNN", "RANDOM FOREST"]
 	regressors = [	KNeighborsRegressor(n_neighbors=707, weights='distance',
                               algorithm='kd_tree', leaf_size=30, p=1,
                               metric='manhattan', metric_params=None, n_jobs=-1),
-					RandomForestRegressor(n_estimators=307, n_jobs=-1, random_state=0)]
+					RandomForestRegressor(n_estimators=307, n_jobs=-1, random_state=0), 
+					AdaBoostRegressor(n_estimators=5, loss='square', random_state=1)]
 
 	stregr = StackingRegressor(regressors = regressors, meta_regressor = Ridge())
 	print ("Cargando los modelos")
